@@ -26,6 +26,8 @@ const char Game::getCharValue(Game::PlayerCharakter input) const
 		return 'O';
 	case Game::PlayerCharakter::PLAYER2:
 		return 'X';
+	case Game::PlayerCharakter::FREEDOM:
+		return '.';
 	}
 }
 
