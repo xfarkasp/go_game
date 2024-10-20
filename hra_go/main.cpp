@@ -4,8 +4,6 @@
 int main(int argc, char* argv[]) 
 {
 	Matrix board{ 9, 9 };
-	std::cout << board;
-	
     try {
         Game gameInstacne{ std::move(board) };
     }
