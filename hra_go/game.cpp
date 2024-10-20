@@ -3,14 +3,15 @@
 #include <stdexcept>
 
 Game::Game(size_t rows, size_t cols)
-	:m_board(Matrix{rows, cols})
+	:m_board(Matrix{rows, cols}), m_pastBoard(Matrix{rows, cols})
 {
 	m_playerScores = { 0, 0 };
 	run();
 };
 
 Game::Game(Matrix&& board)
-	:m_board(std::move(board))
+	:m_board(std::move(board)),
+	m_pastBoard(m_board.m_rows.size(), m_board.m_rows[0].size())
 {
 	m_playerScores = { 0, 0 };
 	print();
@@ -30,8 +31,13 @@ std::set<std::pair<int, int>> Game::checkArea(std::set<std::pair<int, int>> area
 		int i = point.first;
 		int j = point.second;
 		const auto& currentChar = m_board[i][j];
-
-		if (i != 0
+		const auto& currentPlayer = m_round % 2 == 0 ? 'o' : 'x';;
+		if (!createArea && currentPlayer == currentChar)
+		{
+			freedoms++;
+			continue;
+		}
+		if (   i != 0
 			&& m_board[i - 1][j] != '.')
 		{
 			int delta = i - 1;
@@ -237,16 +243,17 @@ void Game::turn()
 			if (m_board[positions.first][positions.second] == '.')
 			{
 				m_board[positions.first][positions.second] = m_round % 2 == 0 ? 'o' : 'x';
-				if (std::find(m_pastConfigs.begin(), m_pastConfigs.end(), m_board) == m_pastConfigs.end())
+				// check KO rule
+				if (m_board == m_pastBoard)
 				{
-					freedomChecker();
-					print();
-					m_round++;
-					m_pastConfigs.emplace_back(m_board);
+					m_board[positions.first][positions.second] = '.';
 				}
 				else
 				{
-					m_board = m_pastConfigs.back();
+					m_pastBoard = m_board;
+					freedomChecker();
+					print();
+					m_round++;
 				}
 			}
 		}

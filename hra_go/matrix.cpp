@@ -38,14 +38,13 @@ bool Matrix::operator==(const Matrix& other) const
 	{
 		for (size_t element = 0; element < this->m_rows[0].size(); element++)
 		{
-			Row matrixRow = this[row][element];
-			char element1 = matrixRow[element];
-			if (element1 != other[row][element])
+			if (this->m_rows[row][element] != other[row][element])
 			{
 				return false;
 			}
 		}
 	}
+	return true;
 }
 
 Row Matrix::operator [] (const size_t rowPos) const
