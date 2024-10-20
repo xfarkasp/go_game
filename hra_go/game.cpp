@@ -13,7 +13,7 @@ Game::Game(Matrix&& board)
 	:m_board(std::move(board))
 {
 	m_playerScores = { 0, 0 };
-	m_board[2][2] = 'o';
+	/*m_board[2][2] = 'o';
 	m_board[2][3] = 'o';
 	m_board[3][2] = 'o';
 	m_board[3][3] = 'o';
@@ -24,7 +24,7 @@ Game::Game(Matrix&& board)
 	m_board[3][1] = 'x';
 	m_board[2][4] = 'x';
 	m_board[3][4] = 'x';
-	m_board[4][2] = 'x';
+	m_board[4][2] = 'x';*/
 	
 	print();
 
@@ -69,7 +69,7 @@ void Game::freedomChecker()
 						delta--;
 					}
 					
-					if (delta == 0 || m_board[delta][j] != currentChar)
+					if (delta == 0 || m_board[delta][j] == opponentChar)
 					{
 						freedoms--;
 					}
@@ -91,7 +91,7 @@ void Game::freedomChecker()
 						delta++;
 					}
 
-					if (delta == m_board.m_rows.size() - 1 || m_board[delta][j] != currentChar)
+					if (delta == m_board.m_rows.size() - 1 || m_board[delta][j] == opponentChar)
 					{
 						freedoms--;
 					}
@@ -113,7 +113,7 @@ void Game::freedomChecker()
 						delta--;
 					}
 
-					if (delta == 0 || m_board[i][delta] != currentChar)
+					if (delta == 0 || m_board[i][delta] == opponentChar)
 					{
 						freedoms--;
 					}
@@ -135,7 +135,7 @@ void Game::freedomChecker()
 						delta++;
 					}
 
-					if (delta == m_board.m_rows.size() - 1 || m_board[delta][j] != currentChar)
+					if (delta == m_board.m_rows.size() - 1 || m_board[i][delta] == opponentChar)
 					{
 						freedoms--;
 					}
