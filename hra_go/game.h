@@ -3,22 +3,16 @@
 #include <set>
 #include "matrix.h"
 
-enum class PlayerNumber : char
-{
-	PLAYER1 = 'o',
-	PLAYER2 = 'x'
-};
-
-enum class Directions
-{
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT
-};
-
 class Game
 {
+public:
+enum class PlayerCharakter : char
+{
+	PLAYER1 = 'O',
+	PLAYER2 = 'X',
+	FREEDOM = '.'
+};
+
 public:
 	Game(size_t rows, size_t cols);
 	Game(Matrix&& board);
@@ -27,6 +21,7 @@ public:
 	void freedomChecker();
 	std::set<std::pair<int, int>> checkArea(std::set<std::pair<int, int>> area, bool createArea = true);
 	void print() { std::cout << m_board; }
+	const char getCharValue(PlayerCharakter input) const;
 
 private:
 	std::vector<unsigned int> m_playerScores;

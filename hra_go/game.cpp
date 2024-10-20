@@ -18,9 +18,62 @@ Game::Game(Matrix&& board)
 	run();
 };
 
+const char Game::getCharValue(Game::PlayerCharakter input) const
+{
+	switch (input)
+	{
+	case Game::PlayerCharakter::PLAYER1:
+		return 'O';
+	case Game::PlayerCharakter::PLAYER2:
+		return 'X';
+	}
+}
+
 void Game::run()
 {
-	turn();
+	std::string input;
+	size_t passCounter = 0;
+	while (passCounter != 2)
+	{
+		try
+		{
+			std::getline(std::cin, input);
+			std::stringstream ss{ input };
+			std::string temp;
+			ss >> temp;
+			if (temp == "pass")
+			{
+				passCounter++;
+				m_round++;
+				continue;
+			}
+			passCounter = 0;
+			std::pair<unsigned int, unsigned int> positions;
+			positions.first = std::stoi(temp);
+			ss >> temp;
+			positions.second = std::stoi(temp);
+			if (m_board[positions.first][positions.second] == getCharValue(PlayerCharakter::FREEDOM))
+			{
+				m_board[positions.first][positions.second] = m_round % 2 == 0 ? getCharValue(PlayerCharakter::PLAYER1) : getCharValue(PlayerCharakter::PLAYER2);
+				// check KO rule
+				if (m_board == m_pastBoard)
+				{
+					m_board[positions.first][positions.second] = getCharValue(PlayerCharakter::FREEDOM);
+				}
+				else
+				{
+					m_pastBoard = m_board;
+					freedomChecker();
+					print();
+					m_round++;
+				}
+			}
+		}
+		catch (...)
+		{
+			throw std::runtime_error("Invalid input");
+		}
+	}
 }
 
 std::set<std::pair<int, int>> Game::checkArea(std::set<std::pair<int, int>> area, bool createArea)
@@ -31,14 +84,14 @@ std::set<std::pair<int, int>> Game::checkArea(std::set<std::pair<int, int>> area
 		int i = point.first;
 		int j = point.second;
 		const auto& currentChar = m_board[i][j];
-		const auto& currentPlayer = m_round % 2 == 0 ? 'o' : 'x';;
+		const auto& currentPlayer = m_round % 2 == 0 ? getCharValue(PlayerCharakter::PLAYER1) : getCharValue(PlayerCharakter::PLAYER2);
 		if (!createArea && currentPlayer == currentChar)
 		{
 			freedoms++;
 			continue;
 		}
 		if (   i != 0
-			&& m_board[i - 1][j] != '.')
+			&& m_board[i - 1][j] != getCharValue(PlayerCharakter::FREEDOM))
 		{
 			int delta = i - 1;
 			while (delta != 0 && m_board[delta][j] == currentChar)
@@ -49,12 +102,11 @@ std::set<std::pair<int, int>> Game::checkArea(std::set<std::pair<int, int>> area
 				}
 				else
 				{
-					if (m_board[delta][j] == '.')
+					if (m_board[delta][j] == getCharValue(PlayerCharakter::FREEDOM))
 					{
 						freedoms++;
 					}
 				}
-				
 				delta--;
 			}
 		}
@@ -65,7 +117,7 @@ std::set<std::pair<int, int>> Game::checkArea(std::set<std::pair<int, int>> area
 		}
 
 		if (   i != m_board.m_rows.size() - 1
-			&& m_board[i + 1][j] != '.')
+			&& m_board[i + 1][j] != getCharValue(PlayerCharakter::FREEDOM))
 		{
 			int delta = i + 1;
 			while (delta != m_board.m_rows.size() - 1 && m_board[delta][j] == currentChar)
@@ -76,7 +128,7 @@ std::set<std::pair<int, int>> Game::checkArea(std::set<std::pair<int, int>> area
 				}
 				else
 				{
-					if (m_board[delta][j] == '.')
+					if (m_board[delta][j] == getCharValue(PlayerCharakter::FREEDOM))
 					{
 						freedoms++;
 					}
@@ -92,7 +144,7 @@ std::set<std::pair<int, int>> Game::checkArea(std::set<std::pair<int, int>> area
 		}
 
 		if (j != 0
-			&& m_board[i][j - 1] != '.')
+			&& m_board[i][j - 1] != getCharValue(PlayerCharakter::FREEDOM))
 		{
 			int delta = j - 1;
 			while (	   delta != 0 
@@ -104,7 +156,7 @@ std::set<std::pair<int, int>> Game::checkArea(std::set<std::pair<int, int>> area
 				}
 				else
 				{
-					if (m_board[i][delta] == '.')
+					if (m_board[i][delta] == getCharValue(PlayerCharakter::FREEDOM))
 					{
 						freedoms++;
 					}
@@ -119,7 +171,7 @@ std::set<std::pair<int, int>> Game::checkArea(std::set<std::pair<int, int>> area
 		}
 
 		if (   j != m_board.m_rows[0].size() - 1
-			&& m_board[i][j + 1] != '.')
+			&& m_board[i][j + 1] != getCharValue(PlayerCharakter::FREEDOM))
 		{
 			int delta = j + 1;
 			while (delta != 0 && m_board[i][delta] == currentChar)
@@ -130,7 +182,7 @@ std::set<std::pair<int, int>> Game::checkArea(std::set<std::pair<int, int>> area
 				}
 				else
 				{
-					if (m_board[i][delta] == '.')
+					if (m_board[i][delta] == getCharValue(PlayerCharakter::FREEDOM))
 					{
 						freedoms++;
 					}
@@ -149,7 +201,7 @@ std::set<std::pair<int, int>> Game::checkArea(std::set<std::pair<int, int>> area
 	{
 		for (auto& point : area)
 		{
-			m_board[point.first][point.second] = '.';
+			m_board[point.first][point.second] = getCharValue(PlayerCharakter::FREEDOM);
 		}
 		print();
 	}
@@ -166,7 +218,7 @@ void Game::freedomChecker()
 		for (size_t j = 0; j < m_board.m_rows[0].size(); j++)
 		{
 			auto& currentChar = m_board[i][j];
-			if (currentChar == '.')
+			if (currentChar == getCharValue(PlayerCharakter::FREEDOM))
 			{
 				continue;
 			}
@@ -214,52 +266,5 @@ void Game::freedomChecker()
 	for (auto area : areas)
 	{
 		checkArea(area, false);
-	}
-}
-
-void Game::turn()
-{
-	std::string input;
-	size_t passCounter = 0;
-	while (passCounter != 2)
-	{
-		try
-		{
-			std::getline(std::cin, input);
-			std::stringstream ss{ input };
-			std::string temp;
-			ss >> temp;
-			if (temp == "pass")
-			{
-				passCounter++;
-				m_round++;
-				continue;
-			}
-			passCounter = 0;
-			std::pair<unsigned int, unsigned int> positions;
-			positions.first = std::stoi(temp);
-			ss >> temp;
-			positions.second = std::stoi(temp);
-			if (m_board[positions.first][positions.second] == '.')
-			{
-				m_board[positions.first][positions.second] = m_round % 2 == 0 ? 'o' : 'x';
-				// check KO rule
-				if (m_board == m_pastBoard)
-				{
-					m_board[positions.first][positions.second] = '.';
-				}
-				else
-				{
-					m_pastBoard = m_board;
-					freedomChecker();
-					print();
-					m_round++;
-				}
-			}
-		}
-		catch (...)
-		{
-			throw std::runtime_error("Invalid input");
-		}
 	}
 }
