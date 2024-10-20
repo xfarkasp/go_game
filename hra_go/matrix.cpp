@@ -11,11 +11,41 @@ Matrix::Matrix(size_t rows, size_t cols)
 Matrix::Matrix(Matrix&& other) noexcept
 	: m_rows(std::move(other.m_rows)) {};
 
+Matrix::Matrix(Matrix& other) noexcept
+	: m_rows(other.m_rows) {};
+
 Matrix& Matrix::operator=(Matrix&& other) noexcept {
 	if (this != &other) {
 		m_rows = std::move(other.m_rows);
 	}
 	return *this;
+}
+
+Matrix& Matrix::operator=(const Matrix& other) noexcept {
+	if (this != &other) {
+		m_rows = other.m_rows;
+	}
+	return *this;
+}
+
+bool Matrix::operator==(const Matrix& other) const
+{
+	if (this->m_rows.size() != other.m_rows.size())
+	{
+		return false;
+	}
+	for (size_t row = 0; row < this->m_rows.size(); row++)
+	{
+		for (size_t element = 0; element < this->m_rows[0].size(); element++)
+		{
+			Row matrixRow = this[row][element];
+			char element1 = matrixRow[element];
+			if (element1 != other[row][element])
+			{
+				return false;
+			}
+		}
+	}
 }
 
 Row Matrix::operator [] (const size_t rowPos) const

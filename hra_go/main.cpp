@@ -3,7 +3,7 @@
 
 int main(int argc, char* argv[]) 
 {
-	Matrix board{ 9, 9 };
+	Matrix board{ 5, 5 };
     try {
         Game gameInstacne{ std::move(board) };
     }

@@ -237,10 +237,17 @@ void Game::turn()
 			if (m_board[positions.first][positions.second] == '.')
 			{
 				m_board[positions.first][positions.second] = m_round % 2 == 0 ? 'o' : 'x';
-				freedomChecker();
-				print();
-
-				m_round++;
+				if (std::find(m_pastConfigs.begin(), m_pastConfigs.end(), m_board) == m_pastConfigs.end())
+				{
+					freedomChecker();
+					print();
+					m_round++;
+					m_pastConfigs.emplace_back(m_board);
+				}
+				else
+				{
+					m_board = m_pastConfigs.back();
+				}
 			}
 		}
 		catch (...)
@@ -249,5 +256,3 @@ void Game::turn()
 		}
 	}
 }
-
-

@@ -33,4 +33,5 @@ private:
 	Matrix m_board;
 	unsigned int m_round = 0;
 	std::vector<std::vector<std::pair<int, int>>> m_areas;
+	std::vector<Matrix> m_pastConfigs;
 };

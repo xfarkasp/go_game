@@ -8,8 +8,11 @@ public:
 	Matrix(size_t rows, size_t cols);
 
 	Matrix(Matrix&& other) noexcept;
+	Matrix(Matrix& other) noexcept;
 
 	Matrix& operator=(Matrix&& other) noexcept;
+	Matrix& operator=(const Matrix& other) noexcept;
+	bool operator==(const Matrix& other) const;
 
 	Row operator [] (const size_t rowPos) const;
 
