@@ -56,7 +56,9 @@ void Game::run()
 				positions.second = std::stoi(temp);
 				if (m_board[positions.first][positions.second] == getCharValue(PlayerCharakter::FREEDOM))
 				{
-					m_board[positions.first][positions.second] = m_round % 2 == 0 ? getCharValue(PlayerCharakter::PLAYER1) : getCharValue(PlayerCharakter::PLAYER2);
+					std::pair<unsigned int, unsigned int>pastScore(m_playerScores);
+					const char currentPlayer = m_round % 2 == 0 ? getCharValue(PlayerCharakter::PLAYER1) : getCharValue(PlayerCharakter::PLAYER2);
+					m_board[positions.first][positions.second] = currentPlayer;
 					// check KO rule
 					if (std::find(m_pastConfigs.begin(), m_pastConfigs.end(), m_board) != m_pastConfigs.end())
 					{
@@ -64,9 +66,15 @@ void Game::run()
 					}
 					else
 					{
-						//m_pastBoard = m_board;
 						m_pastConfigs.emplace_back(m_board);
 						freedomChecker();
+						if (m_board[positions.first][positions.second] != currentPlayer)
+						{
+							m_pastConfigs.pop_back();
+							m_board = m_pastConfigs.back();
+							m_playerScores = std::move(pastScore);
+							continue;
+						}
 						m_round++;
 					}
 				}
@@ -270,4 +278,10 @@ void Game::freedomChecker()
 	{
 		checkArea(area, false);
 	}
+	m_round++;
+	for (auto area : areas)
+	{
+		checkArea(area, false);
+	}
+	m_round--;
 }
