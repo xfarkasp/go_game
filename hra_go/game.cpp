@@ -96,7 +96,9 @@ std::set<std::pair<int, int>> Game::checkArea(std::set<std::pair<int, int>> area
 		int i = point.first;
 		int j = point.second;
 		const auto& currentChar = m_board[i][j];
-		if (!createArea && currentPlayer == currentChar)
+		if (   !createArea 
+			&& currentPlayer == currentChar
+			|| currentChar == '.')
 		{
 			freedoms++;
 			continue;
