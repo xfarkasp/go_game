@@ -6,7 +6,6 @@ class Matrix
 {
 public:
 	Matrix(size_t rows, size_t cols);
-
 	Matrix(Matrix&& other) noexcept;
 	Matrix(Matrix& other) noexcept;
 
@@ -15,7 +14,6 @@ public:
 	bool operator==(const Matrix& other) const;
 
 	Row operator [] (const size_t rowPos) const;
-
 	Row& operator [] (const size_t rowPos);
 
 	friend std::ostream& operator << (std::ostream& stream, Matrix& inputMat);

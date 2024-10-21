@@ -20,11 +20,12 @@ public:
 	void turn();
 	void freedomChecker();
 	std::set<std::pair<int, int>> checkArea(std::set<std::pair<int, int>> area, bool createArea = true);
-	void print() { std::cout << m_board; }
+	void printBoard() { std::cout << m_board; }
+	void printScore() const { std::cout << m_playerScores.first << " " << m_playerScores.second; }
 	const char getCharValue(PlayerCharakter input) const;
 
 private:
-	std::vector<unsigned int> m_playerScores;
+	std::pair<unsigned int, unsigned int> m_playerScores;
 	Matrix m_board;
 	Matrix m_pastBoard;
 	unsigned int m_round = 0;
