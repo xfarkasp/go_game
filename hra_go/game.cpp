@@ -29,7 +29,7 @@ const char Game::getCharValue(Game::PlayerCharakter input) const
 		return '.';
 	}
 }
-
+// run the game simulation
 void Game::run()
 {
 	std::string input;
@@ -78,7 +78,7 @@ void Game::run()
 		throw std::runtime_error("Invalid input");
 	}
 }
-
+// create areas or check area freedoms
 std::set<std::pair<int, int>> Game::checkArea(std::set<std::pair<int, int>> area, bool createArea)
 {
 	int freedoms = 0;
@@ -88,11 +88,7 @@ std::set<std::pair<int, int>> Game::checkArea(std::set<std::pair<int, int>> area
 		int i = point.first;
 		int j = point.second;
 		const auto& currentChar = m_board[i][j];
-		if (!createArea && currentPlayer == currentChar)
-		{
-			freedoms++;
-			continue;
-		}
+
 		if (   i != 0
 			&& m_board[i - 1][j] != getCharValue(PlayerCharakter::FREEDOM))
 		{
@@ -199,21 +195,29 @@ std::set<std::pair<int, int>> Game::checkArea(std::set<std::pair<int, int>> area
 			break;
 		}
 	}
-	if (!createArea
+	if (   !createArea
 		&& freedoms == 0)
 	{
 		for (auto& point : area)
 		{
+			if (currentPlayer != m_board[point.first][point.second])
+			{
+				currentPlayer == getCharValue(PlayerCharakter::PLAYER1) ? m_playerScores.first++ : m_playerScores.second++;
+			}
+			else
+			{
+				m_round--;
+			}
 			m_board[point.first][point.second] = getCharValue(PlayerCharakter::FREEDOM);
-			currentPlayer == getCharValue(PlayerCharakter::PLAYER1) ? m_playerScores.first++ : m_playerScores.second++;
+			
 		}
 	}
+
 	return area;
 }
 
 void Game::freedomChecker()
 {
-	std::vector<char*> delPoints;
 	std::set<std::pair<int, int>> area;
 	std::vector<std::set<std::pair<int, int>>> areas;
 	for (size_t i = 0; i < m_board.m_rows.size(); i++)
