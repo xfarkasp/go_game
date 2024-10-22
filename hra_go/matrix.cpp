@@ -84,4 +84,3 @@ std::ostream& operator << (std::ostream& stream, Matrix& inputMat)
 	stream << std::endl;
 	return stream;
 }
-

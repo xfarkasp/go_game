@@ -17,7 +17,6 @@ public:
 	Game(size_t rows, size_t cols);
 	Game(Matrix&& board);
 	void run();
-	void turn();
 	void freedomChecker();
 	std::set<std::pair<int, int>> checkArea(std::set<std::pair<int, int>> area, bool createArea = true);
 	void printBoard() { std::cout << m_board; }
@@ -27,9 +26,7 @@ public:
 private:
 	std::pair<unsigned int, unsigned int> m_playerScores;
 	Matrix m_board;
-	Matrix m_pastBoard;
 	unsigned int m_round = 0;
 	std::vector<std::vector<std::pair<int, int>>> m_areas;
 	std::vector<Matrix> m_pastConfigs;
-
 };
