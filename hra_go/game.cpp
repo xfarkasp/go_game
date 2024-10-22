@@ -3,7 +3,7 @@
 #include <stdexcept>
 
 Game::Game(size_t rows, size_t cols)
-	:m_board(Matrix{rows, cols})
+	:m_board(Matrix{ rows, cols })
 {
 	m_playerScores = { 0, 0 };
 	run();
@@ -39,8 +39,8 @@ void Game::run()
 		std::getline(std::cin, input);
 		std::stringstream ss{ input };
 		std::string temp;
-		while (    passCounter != 2 
-				&& ss >> temp)
+		while (passCounter != 2
+			&& ss >> temp)
 		{
 			if (temp == "pass")
 			{
@@ -59,21 +59,25 @@ void Game::run()
 					std::pair<unsigned int, unsigned int>pastScore(m_playerScores);
 					const char currentPlayer = m_round % 2 == 0 ? getCharValue(PlayerCharakter::PLAYER1) : getCharValue(PlayerCharakter::PLAYER2);
 					m_board[positions.first][positions.second] = currentPlayer;
+					freedomChecker();
 					// check KO rule
 					if (std::find(m_pastConfigs.begin(), m_pastConfigs.end(), m_board) != m_pastConfigs.end())
 					{
-						m_board[positions.first][positions.second] = getCharValue(PlayerCharakter::FREEDOM);
+						//m_board[positions.first][positions.second] = getCharValue(PlayerCharakter::FREEDOM);
+						m_board = m_pastConfigs.back();
 					}
 					else
 					{
-						m_pastConfigs.emplace_back(m_board);
-						freedomChecker();
+						// check suicide
 						if (m_board[positions.first][positions.second] != currentPlayer)
 						{
-							m_pastConfigs.pop_back();
 							m_board = m_pastConfigs.back();
 							m_playerScores = std::move(pastScore);
 							continue;
+						}
+						else
+						{
+							m_pastConfigs.emplace_back(m_board);
 						}
 						m_round++;
 					}
@@ -96,19 +100,19 @@ std::set<std::pair<int, int>> Game::checkArea(std::set<std::pair<int, int>> area
 		int i = point.first;
 		int j = point.second;
 		const auto& currentChar = m_board[i][j];
-		if (   !createArea 
+		if (!createArea
 			&& currentPlayer == currentChar
 			|| currentChar == '.')
 		{
 			freedoms++;
 			continue;
 		}
-		if (   i != 0
+		if (i != 0
 			&& m_board[i - 1][j] != getCharValue(PlayerCharakter::FREEDOM))
 		{
 			int delta = i - 1;
-			while (   delta != 0 
-				   && m_board[delta][j] == currentChar)
+			while (delta != 0
+				&& m_board[delta][j] == currentChar)
 			{
 				if (createArea)
 				{
@@ -124,13 +128,13 @@ std::set<std::pair<int, int>> Game::checkArea(std::set<std::pair<int, int>> area
 				delta--;
 			}
 		}
-		else if(!createArea && i != 0)
+		else if (!createArea && i != 0)
 		{
 			freedoms++;
 			break;
 		}
 
-		if (   i != m_board.m_rows.size() - 1
+		if (i != m_board.m_rows.size() - 1
 			&& m_board[i + 1][j] != getCharValue(PlayerCharakter::FREEDOM))
 		{
 			int delta = i + 1;
@@ -147,23 +151,23 @@ std::set<std::pair<int, int>> Game::checkArea(std::set<std::pair<int, int>> area
 						freedoms++;
 					}
 				}
-				
+
 				delta++;
 			}
 		}
-		else if (  !createArea 
-				&& i != m_board.m_rows.size() - 1)
+		else if (!createArea
+			&& i != m_board.m_rows.size() - 1)
 		{
 			freedoms++;
 			break;
 		}
 
-		if (   j != 0
+		if (j != 0
 			&& m_board[i][j - 1] != getCharValue(PlayerCharakter::FREEDOM))
 		{
 			int delta = j - 1;
-			while (	   delta != 0 
-					&& m_board[i][delta] == currentChar)
+			while (delta != 0
+				&& m_board[i][delta] == currentChar)
 			{
 				if (createArea)
 				{
@@ -185,7 +189,7 @@ std::set<std::pair<int, int>> Game::checkArea(std::set<std::pair<int, int>> area
 			break;
 		}
 
-		if (   j != m_board.m_rows[0].size() - 1
+		if (j != m_board.m_rows[0].size() - 1
 			&& m_board[i][j + 1] != getCharValue(PlayerCharakter::FREEDOM))
 		{
 			int delta = j + 1;
@@ -205,14 +209,14 @@ std::set<std::pair<int, int>> Game::checkArea(std::set<std::pair<int, int>> area
 				delta++;
 			}
 		}
-		else if (  !createArea 
-				&& j != m_board.m_rows[0].size() - 1)
+		else if (!createArea
+			&& j != m_board.m_rows[0].size() - 1)
 		{
 			freedoms++;
 			break;
 		}
 	}
-	if (   !createArea
+	if (!createArea
 		&& freedoms == 0)
 	{
 		for (auto& point : area)
@@ -253,10 +257,7 @@ void Game::freedomChecker()
 
 			area.insert(std::make_pair(i, j));
 			area = checkArea(area);
-			/*if (areas.empty())
-			{
-				areas.emplace_back(area);
-			}*/
+
 			for (const auto& element : area)
 			{
 				for (size_t it = 0; it < areas.size(); it++)
