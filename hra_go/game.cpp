@@ -65,6 +65,10 @@ void Game::run()
 					{
 						//m_board[positions.first][positions.second] = getCharValue(PlayerCharakter::FREEDOM);
 						m_board = m_pastConfigs.back();
+						if (pastScore != m_playerScores)
+						{
+							m_playerScores = std::move(pastScore);
+						}
 					}
 					else
 					{
@@ -224,6 +228,7 @@ std::set<std::pair<int, int>> Game::checkArea(std::set<std::pair<int, int>> area
 			m_board[point.first][point.second] = getCharValue(PlayerCharakter::FREEDOM);
 			currentPlayer == getCharValue(PlayerCharakter::PLAYER1) ? m_playerScores.first++ : m_playerScores.second++;
 		}
+		area.clear();
 	}
 	return area;
 }
@@ -281,13 +286,19 @@ void Game::freedomChecker()
 	// chcek capture possibilities for current char
 	for (auto area : areas)
 	{
-		checkArea(area, false);
+		if (checkArea(area, false).empty())
+		{
+			break;
+		}
 	}
 	// chcek capture possibilities for opponent character
 	m_round++;
 	for (auto area : areas)
 	{
-		checkArea(area, false);
+		if (checkArea(area, false).empty())
+		{
+			break;
+		}
 	}
 	m_round--;
 }
